@@ -1,5 +1,5 @@
 module Spree
-  class TaxonomySerializer < ActiveModel::Serializer
+  class TaxonomySerializer < BaseSerializer
     # attributes *Spree::Api::ApiHelpers.taxonomy_attributes
     attributes :id, :name, :root_taxon
 

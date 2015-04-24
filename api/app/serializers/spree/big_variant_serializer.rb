@@ -1,14 +1,11 @@
 module Spree
-  class BigVariantSerializer < ActiveModel::Serializer
+  class BigVariantSerializer < BaseSerializer
     root :variant
 
-    # attributes *Spree::Api::ApiHelpers.variant_attributes
-    attributes :id, :name, :is_master, :price, :in_stock, :sku, :display_price,
-               :weight, :height, :width, :depth, :cost_price, :slug, :description,
-               :options_text, :track_inventory, :product_id
+    attributes *Spree::Api::ApiHelpers.variant_attributes
 
-    has_many :images, embed: :objects
-    has_many :option_values, embed: :objects
+    has_many :images
+    has_many :option_values
     has_many :stock_items
 
     def cost_price

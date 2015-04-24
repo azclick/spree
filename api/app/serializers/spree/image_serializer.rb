@@ -1,10 +1,6 @@
 module Spree
-  class ImageSerializer < ActiveModel::Serializer
-    # attributes *Spree::Api::ApiHelpers.image_attributes
-    attributes  :id, :position, :attachment_file_name, :attachment_width,
-                :attachment_height, :attachment_content_type, :urls,
-                :type, :attachment_updated_at, :alt, :mini_url, :small_url,
-                :product_url, :large_url
+  class ImageSerializer < BaseSerializer
+    attributes *Spree::Api::ApiHelpers.image_attributes
 
     def mini_url
       object.attachment(:mini)

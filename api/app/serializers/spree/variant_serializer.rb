@@ -1,6 +1,7 @@
 module Spree
-  class VariantSerializer < ActiveModel::Serializer
-    # attributes *Spree::Api::ApiHelpers.variant_attributes
-    attributes :id, :name, :sku, :price
+  class VariantSerializer < BaseSerializer
+    attributes *Spree::Api::ApiHelpers.variant_attributes
+
+    has_many :images
   end
 end

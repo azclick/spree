@@ -1,5 +1,5 @@
 module Spree
-  class TaxonomyTaxonSerializer < ActiveModel::Serializer
+  class TaxonomyTaxonSerializer < BaseSerializer
     root false
     attributes :id, :name
 

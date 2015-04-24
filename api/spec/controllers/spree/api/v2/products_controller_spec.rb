@@ -8,8 +8,6 @@ module Spree
     let!(:product) { create(:product) }
     let!(:inactive_product) { create(:product, available_on: Time.now.tomorrow, name: "inactive") }
     let(:base_attributes) { Api::ApiHelpers.product_attributes }
-    let(:show_attributes) { base_attributes.dup.push(:has_variants) }
-    let(:new_attributes) { base_attributes }
 
     let(:product_data) do
       { name: "The Other Product",
@@ -51,7 +49,7 @@ module Spree
 
       it "retrieves a list of products" do
         api_get :index
-        expect(json_response["products"].first).to have_attributes(show_attributes)
+        expect(json_response["products"].first).to have_attributes(base_attributes)
         expect(json_response["meta"]["total_count"]).to eq(1)
         expect(json_response["meta"]["current_page"]).to eq(1)
         expect(json_response["meta"]["pages"]).to eq(1)
@@ -60,7 +58,7 @@ module Spree
 
       it "retrieves a list of products by id" do
         api_get :index, ids: [product.id]
-        expect(json_response["products"].first).to have_attributes(show_attributes)
+        expect(json_response["products"].first).to have_attributes(base_attributes)
         expect(json_response["meta"]["total_count"]).to eq(1)
         expect(json_response["meta"]["current_page"]).to eq(1)
         expect(json_response["meta"]["pages"]).to eq(1)
@@ -79,8 +77,8 @@ module Spree
       it "retrieves a list of products by ids string" do
         second_product = create(:product)
         api_get :index, ids: [product.id, second_product.id].join(",")
-        expect(json_response["products"].first).to have_attributes(show_attributes)
-        expect(json_response["products"][1]).to have_attributes(show_attributes)
+        expect(json_response["products"].first).to have_attributes(base_attributes)
+        expect(json_response["products"][1]).to have_attributes(base_attributes)
         expect(json_response["meta"]["total_count"]).to eq(2)
         expect(json_response["meta"]["current_page"]).to eq(1)
         expect(json_response["meta"]["pages"]).to eq(1)
@@ -101,7 +99,7 @@ module Spree
         it "can select the next page of products" do
           second_product = create(:product)
           api_get :index, page: 2, per_page: 1
-          expect(json_response["products"].first).to have_attributes(show_attributes)
+          expect(json_response["products"].first).to have_attributes(base_attributes)
           expect(json_response["meta"]["total_count"]).to eq(2)
           expect(json_response["meta"]["current_page"]).to eq(2)
           expect(json_response["meta"]["pages"]).to eq(2)
@@ -120,7 +118,7 @@ module Spree
       it "can search for products" do
         create(:product, name: "The best product in the world")
         api_get :index, q: { name_cont: "best" }
-        expect(json_response["products"].first).to have_attributes(show_attributes)
+        expect(json_response["products"].first).to have_attributes(base_attributes)
         expect(json_response["meta"]["count"]).to eq(1)
       end
 
@@ -133,27 +131,10 @@ module Spree
 
         api_get :show, id: product.to_param
 
-        expect(json_response["product"]).to have_attributes(show_attributes)
-        expect(json_response["product"]['variants'].first).to have_attributes([:name,
-                                                                               :is_master,
-                                                                               :price,
-                                                                               :images,
-                                                                               :in_stock])
-
-        expect(json_response["product"]['variants'].first['images'].first).to have_attributes([:attachment_file_name,
-                                                                                               :attachment_width,
-                                                                                               :attachment_height,
-                                                                                               :attachment_content_type,
-                                                                                               :mini_url,
-                                                                                               :small_url,
-                                                                                               :product_url,
-                                                                                               :large_url])
-
-        expect(json_response["product"]["product_properties"].first).to have_attributes([:value,
-                                                                                         :product_id,
-                                                                                         :property_name])
-        expect(json_response["product"]["classifications"].first).to have_attributes([:taxon_id, :position, :taxon])
-        expect(json_response["product"]["classifications"].first['taxon']).to have_attributes([:id, :name, :pretty_name, :permalink, :taxonomy_id, :parent_id])
+        expect(json_response["product"]).to have_attributes(base_attributes)
+        expect(json_response["product"]['variant_ids'].first).to eq(3)
+        expect(json_response["product"]["product_property_ids"].first).to eq(1)
+        expect(json_response["product"]["classification_ids"].first).to eq(1)
       end
 
       context "tracking is disabled" do
@@ -198,7 +179,7 @@ module Spree
       it "can learn how to create a new product" do
         pending "I don't think anyone uses this in earnest..."
         api_get :new
-        expect(json_response["attributes"]).to eq(new_attributes.map(&:to_s))
+        expect(json_response["attributes"]).to eq(base_attributes.map(&:to_s))
         required_attributes = json_response["required_attributes"]
         expect(required_attributes).to include("name")
         expect(required_attributes).to include("price")
@@ -331,7 +312,7 @@ module Spree
 
           it "can still create a product" do
             api_post :create, product: product_data, token: "fake"
-            expect(json_response["product"]).to have_attributes(show_attributes)
+            expect(json_response["product"]).to have_attributes(base_attributes)
             expect(response.status).to eq(201)
           end
         end

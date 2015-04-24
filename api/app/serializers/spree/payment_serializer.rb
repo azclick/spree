@@ -1,5 +1,5 @@
 module Spree
-  class PaymentSerializer < ActiveModel::Serializer
+  class PaymentSerializer < BaseSerializer
     # attributes *Spree::Api::ApiHelpers.payment_attributes
     attributes :id, :source_type, :source_id, :amount, :display_amount,
                :payment_method_id, :response_code, :state, :avs_response,

@@ -1,5 +1,5 @@
 module Spree
-  class ShipmentSerializer < ActiveModel::Serializer
+  class ShipmentSerializer < BaseSerializer
     # attributes *Spree::Api::ApiHelpers.shipment_attributes
     attributes :id, :tracking, :number, :cost, :shipped_at, :state, :manifest, :stock_location_name, :order_id
 

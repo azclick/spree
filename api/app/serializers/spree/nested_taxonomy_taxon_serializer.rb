@@ -1,5 +1,5 @@
 module Spree
-  class NestedTaxonomyTaxonSerializer < ActiveModel::Serializer
+  class NestedTaxonomyTaxonSerializer < BaseSerializer
     root false
     attributes :id, :name
 

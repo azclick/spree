@@ -1,5 +1,5 @@
 module Spree
-  class OrderSerializer < ActiveModel::Serializer
+  class OrderSerializer < BaseSerializer
     # attributes *Spree::Api::ApiHelpers.order_attributes
     attributes :id, :number, :item_total, :total, :ship_total,
                :state, :adjustment_total, :user_id, :created_at,
