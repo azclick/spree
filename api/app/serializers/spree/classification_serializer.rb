@@ -1,5 +1,5 @@
 module Spree
-  class ClassificationSerializer < ActiveModel::Serializer
+  class ClassificationSerializer < BaseSerializer
     attributes :id, :position, :taxon_id
 
     has_one :taxon, serializer: Spree::TaxonNoChildrenSerializer

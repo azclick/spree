@@ -1,5 +1,5 @@
 module Spree
-  class ZoneSerializer < ActiveModel::Serializer
+  class ZoneSerializer < BaseSerializer
     # attributes *Spree::Api::ApiHelpers.zone_attributes
     attributes :id, :name
 

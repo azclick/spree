@@ -1,5 +1,5 @@
 module Spree
-  class TaxonNoChildrenSerializer < ActiveModel::Serializer
+  class TaxonNoChildrenSerializer < BaseSerializer
     # attributes *Spree::Api::ApiHelpers.taxon_attributes
     attributes :id, :name, :pretty_name, :permalink, :taxonomy_id, :parent_id
   end

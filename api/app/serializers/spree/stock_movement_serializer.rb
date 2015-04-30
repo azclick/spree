@@ -1,5 +1,5 @@
 module Spree
-  class StockMovementSerializer < ActiveModel::Serializer
+  class StockMovementSerializer < BaseSerializer
     # attributes *Spree::Api::ApiHelpers.stock_movement_attributes
     attributes :id, :stock_item_id, :quantity
 

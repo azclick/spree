@@ -1,5 +1,5 @@
 module Spree
-  class ShippingMethodSerializer < ActiveModel::Serializer
+  class ShippingMethodSerializer < BaseSerializer
     # attributes *Spree::Api::ApiHelpers.shipping_method_attributes
     attributes :id, :name, :code
 

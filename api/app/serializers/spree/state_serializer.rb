@@ -1,5 +1,5 @@
 module Spree
-  class StateSerializer < ActiveModel::Serializer
+  class StateSerializer < BaseSerializer
     # attributes *Spree::Api::ApiHelpers.state_attributes
     attributes :id, :name, :abbr, :country_id
   end

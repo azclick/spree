@@ -1,5 +1,5 @@
 module Spree
-  class ImageSerializer < ActiveModel::Serializer
+  class ImageSerializer < BaseSerializer
     # attributes *Spree::Api::ApiHelpers.image_attributes
     attributes  :id, :position, :attachment_file_name, :attachment_width,
                 :attachment_height, :attachment_content_type, :urls,

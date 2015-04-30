@@ -1,5 +1,5 @@
 module Spree
-  class OptionTypeSerializer < ActiveModel::Serializer
+  class OptionTypeSerializer < BaseSerializer
     # attributes *Spree::Api::ApiHelpers.option_type_attributes
     attributes :id, :name, :position, :presentation
 

@@ -1,5 +1,5 @@
 module Spree
-  class UserSerializer < ActiveModel::Serializer
+  class UserSerializer < BaseSerializer
     # attributes *Spree::Api::ApiHelpers.user_attributes
     attributes :id, :email, :created_at, :updated_at
 

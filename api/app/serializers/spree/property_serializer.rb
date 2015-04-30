@@ -1,5 +1,5 @@
 module Spree
-  class PropertySerializer < ActiveModel::Serializer
+  class PropertySerializer < BaseSerializer
     # attributes *Spree::Api::ApiHelpers.property_attributes
     attributes :id, :name, :presentation
   end

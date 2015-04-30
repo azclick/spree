@@ -1,5 +1,5 @@
 module Spree
-  class SmallVariantSerializer < ActiveModel::Serializer
+  class SmallVariantSerializer < BaseSerializer
     root :variant
 
     # attributes *Spree::Api::ApiHelpers.variant_attributes
