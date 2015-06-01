@@ -32,7 +32,7 @@ module Spree
       alias_action :new_action, to: :create
       alias_action :show, to: :read
       alias_action :index, :read, to: :display
-
+      alias_action :create, :update, :destroy, to: :modify
 
       user ||= Spree.user_class.new
 
@@ -64,6 +64,9 @@ module Spree
         ability = clazz.send(:new, user)
         @rules = rules + ability.send(:rules)
       end
+
+      # Protect admin and user roles
+      cannot [:update, :destroy], Role, name: ['admin']
     end
   end
 end

@@ -3,6 +3,7 @@ Spree::Core::Engine.config.to_prepare do
     Spree.user_class.class_eval do
 
       include Spree::UserApiAuthentication
+      include Spree::UserPaymentSource
       include Spree::UserReporting
 
       has_and_belongs_to_many :spree_roles,
@@ -10,7 +11,7 @@ Spree::Core::Engine.config.to_prepare do
                               foreign_key: "user_id",
                               class_name: "Spree::Role"
 
-      has_many :spree_orders, foreign_key: "user_id", class_name: "Spree::Order"
+      has_many :orders, foreign_key: :user_id, class_name: "Spree::Order"
 
       belongs_to :ship_address, class_name: 'Spree::Address'
       belongs_to :bill_address, class_name: 'Spree::Address'
@@ -21,7 +22,7 @@ Spree::Core::Engine.config.to_prepare do
       end
 
       def last_incomplete_spree_order
-        spree_orders.incomplete.order('created_at DESC').first
+        orders.incomplete.order('created_at DESC').first
       end
     end
   end
