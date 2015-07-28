@@ -87,6 +87,18 @@ module Spree
           inventory_units: contents.map(&:inventory_unit)
         )
       end
+
+      def contents_by_weight
+        contents.sort { |x, y| y.weight <=> x.weight }
+      end
+
+      def volume
+        contents.sum(&:volume)
+      end
+
+      def dimension
+        contents.sum(&:dimension)
+      end
     end
   end
 end

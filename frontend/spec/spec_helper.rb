@@ -74,6 +74,13 @@ RSpec.configure do |config|
     end
   end
 
+  # Ensure DB is clean, so that transaction isolated specs see
+  # pristine state.
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean
+  end
+
   config.before(:each) do
     WebMock.disable!
     if RSpec.current_example.metadata[:js]
@@ -97,7 +104,6 @@ RSpec.configure do |config|
   config.after(:each, :type => :feature) do |example|
     missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
     if missing_translations.any?
-      #binding.pry
       puts "Found missing translations: #{missing_translations.inspect}"
       puts "In spec: #{example.location}"
     end

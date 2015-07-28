@@ -91,7 +91,6 @@ Spree::Core::Engine.add_routes do
       end
 
       resources :adjustments
-      resources :line_items
       resources :return_authorizations do
         member do
           put :fire
@@ -106,7 +105,7 @@ Spree::Core::Engine.add_routes do
         resources :refunds, only: [:new, :create, :edit, :update]
       end
 
-      resources :reimbursements, only: [:create, :show, :edit, :update] do
+      resources :reimbursements, only: [:index, :create, :show, :edit, :update] do
         member do
           post :perform
         end
@@ -125,9 +124,6 @@ Spree::Core::Engine.add_routes do
     resources :taxonomies do
       collection do
         post :update_positions
-      end
-      member do
-        get :get_children
       end
       resources :taxons
     end

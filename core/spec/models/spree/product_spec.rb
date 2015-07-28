@@ -29,14 +29,10 @@ describe Spree::Product, :type => :model do
       end
 
       it 'calls #duplicate_extra' do
-        Spree::Product.class_eval do
-          def duplicate_extra(old_product)
-            self.name = old_product.name.reverse
-          end
-        end
-
-        clone = product.duplicate
-        expect(clone.name).to eq(product.name.reverse)
+        expect_any_instance_of(Spree::Product).to receive(:duplicate_extra)
+          .with(product)
+        expect(product).to_not receive(:duplicate_extra)
+        product.duplicate
       end
     end
 
@@ -203,10 +199,26 @@ describe Spree::Product, :type => :model do
         expect(product.slug).not_to match "/"
       end
 
-      it "renames slug on destroy" do
-        old_slug = product.slug
-        product.destroy
-        expect(old_slug).to_not eq product.slug
+      context "when product destroyed" do
+
+        it "renames slug" do
+          expect { product.destroy }.to change { product.slug }
+        end
+
+        context "when slug is already at or near max length" do
+
+          before do
+            product.slug = "x" * 255
+            product.save!
+          end
+
+          it "truncates renamed slug to ensure it remains within length limit" do
+            product.destroy
+            expect(product.slug.length).to eq 255
+          end
+
+        end
+
       end
 
       it "validates slug uniqueness" do
@@ -230,12 +242,32 @@ describe Spree::Product, :type => :model do
 
         expect(product2.slug).to eq 'test-456'
       end
-
     end
 
     context "hard deletion" do
       it "doesnt raise ActiveRecordError error" do
         expect { product.really_destroy! }.to_not raise_error
+      end
+    end
+
+    context 'history' do
+      before(:each) do
+        @product = create(:product)
+      end
+
+      it 'should keep the history when the product is destroyed' do
+        @product.destroy
+
+        expect(@product.slugs.with_deleted).to_not be_empty
+      end
+
+      it 'should update the history when the product is restored' do
+        @product.destroy
+
+        @product.restore(recursive: true)
+
+        latest_slug = @product.slugs.find_by slug: @product.slug
+        expect(latest_slug).to_not be_nil
       end
     end
   end

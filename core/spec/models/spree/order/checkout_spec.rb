@@ -4,6 +4,8 @@ require 'spree/testing_support/order_walkthrough'
 describe Spree::Order, :type => :model do
   let(:order) { Spree::Order.new }
 
+  before { create(:store) }
+
   def assert_state_changed(order, from, to)
     state_change_exists = order.state_changes.where(:previous_state => from, :next_state => to).exists?
     assert state_change_exists, "Expected order to transition from #{from} to #{to}, but didn't."
@@ -39,8 +41,13 @@ describe Spree::Order, :type => :model do
 
     it '.remove_transition' do
       options = {:from => transitions.first.keys.first, :to => transitions.first.values.first}
-      allow(Spree::Order).to receive(:next_event_transition).and_return([options])
+      expect(Spree::Order).to receive_messages(
+        removed_transitions:    [],
+        next_event_transitions: transitions.dup
+      )
       expect(Spree::Order.remove_transition(options)).to be_truthy
+      expect(Spree::Order.removed_transitions).to eql([options])
+      expect(Spree::Order.next_event_transitions).to_not include(transitions.first)
     end
 
     it '.remove_transition when contract was broken' do
@@ -356,6 +363,7 @@ describe Spree::Order, :type => :model do
         order.user = mock_model(Spree::LegacyUser, default_credit_card: @default_credit_card, email: 'spree@example.org')
 
         allow(order).to receive_messages(payment_required?: true)
+        allow(order).to receive_messages(total: 20.00)
         order.state = 'delivery'
         order.save!
       end
@@ -366,7 +374,17 @@ describe Spree::Order, :type => :model do
 
         expect(order.state).to eq 'payment'
         expect(order.payments.count).to eq 1
+        expect(order.payments.first.amount).to eq 20.00
         expect(order.payments.first.source).to eq @default_credit_card
+      end
+
+      it "only generates payment if payment required" do
+        allow(order).to receive_messages(payment_required?: false)
+        order.next!
+        order.reload
+
+        expect(order.state).to eq 'complete'
+        expect(order.payments.count).to eq 0
       end
     end
 
@@ -693,6 +711,34 @@ describe Spree::Order, :type => :model do
       it 'does not let through unpermitted attributes' do
         expect(order).to receive(:update_attributes).with({})
         order.update_from_params(params, permitted_params)
+      end
+
+      context 'has existing_card param' do
+        let(:permitted_params) do
+          Spree::PermittedAttributes.checkout_attributes +
+            [payments_attributes: Spree::PermittedAttributes.payment_attributes]
+        end
+        let(:credit_card) { create(:credit_card, user_id: order.user_id) }
+        let(:params) do
+          ActionController::Parameters.new(
+            order: { payments_attributes: [{payment_method_id: 1}], existing_card: credit_card.id }
+          )
+        end
+
+        before do
+          Dummy::Application.config.action_controller.action_on_unpermitted_parameters = :raise
+          order.user_id = 3
+        end
+
+        after do
+          Dummy::Application.config.action_controller.action_on_unpermitted_parameters = :log
+        end
+
+        it 'does not attempt to permit existing_card' do
+          expect {
+            order.update_from_params(params, permitted_params)
+          }.not_to raise_error
+        end
       end
 
       context 'has allowed params' do

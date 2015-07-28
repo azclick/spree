@@ -7,6 +7,12 @@ describe Spree::Variant, :type => :model do
 
   it_behaves_like 'default_price'
 
+  context 'sorting' do
+    it 'responds to set_list_position' do
+      expect(variant.respond_to?(:set_list_position)).to eq(true)
+    end
+  end
+
   context "validations" do
     it "should validate price is greater than 0" do
       variant.price = -1
@@ -489,6 +495,29 @@ describe Spree::Variant, :type => :model do
       in_stock_variant.stock_items.first.update_column(:count_on_hand, 10)
 
       expect(Spree::Variant.in_stock).to eq [in_stock_variant]
+    end
+  end
+
+  context "#volume" do
+    let(:variant_zero_width) { create(:variant, width: 0) }
+    let(:variant) { create(:variant) }
+
+    it "it is zero if any dimension parameter is zero" do
+      expect(variant_zero_width.volume).to eq 0
+    end
+
+    it "return the volume if the dimension parameters are different of zero" do
+      volume_expected = variant.width * variant.depth * variant.height
+      expect(variant.volume).to eq (volume_expected)
+    end
+  end
+
+  context "#dimension" do
+    let(:variant) { create(:variant) }
+
+    it "return the dimension if the dimension parameters are different of zero" do
+      dimension_expected = variant.width + variant.depth + variant.height
+      expect(variant.dimension).to eq (dimension_expected)
     end
   end
 end

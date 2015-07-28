@@ -19,7 +19,7 @@ module Spree
         end
 
         def redirect_back_or_default(default)
-          redirect_to(session["spree_user_return_to"] || default)
+          redirect_to(session["spree_user_return_to"] || request.env["HTTP_REFERER"] || default)
           session["spree_user_return_to"] = nil
         end
 
@@ -72,7 +72,7 @@ module Spree
             if respond_to?(:spree_login_path)
               redirect_to spree_login_path
             else
-              redirect_to spree.respond_to?(:root_path) ? spree.root_path : root_path
+              redirect_to spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
             end
           end
         end
