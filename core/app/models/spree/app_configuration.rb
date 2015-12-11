@@ -34,7 +34,7 @@ module Spree
     preference :check_for_spree_alerts, :boolean, default: false
     preference :checkout_zone, :string, default: nil # replace with the name of a zone if you would like to limit the countries
     preference :company, :boolean, default: false # Request company field for billing and shipping addr
-    preference :currency, :string, default: "USD"
+    preference :currency, :string, default: "BRL"
     preference :default_country_id, :integer
     preference :dismissed_spree_alerts, :string, default: ''
     preference :expedited_exchanges, :boolean, default: false # NOTE this requires payment profiles to be supported on your gateway of choice as well as a delayed job handler to be configured with activejob. kicks off an exchange shipment upon return authorization save. charge customer if they do not return items within timely manner.
