@@ -9,7 +9,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = 'https://spreecommerce.com'
   gem.license       = %q{BSD-3}
 
-  gem.files         = `git ls-files`.split($\)
+  gem.files       = Dir.glob("{app,config,db,lib,script}/**/*")
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "spree_api"
